@@ -1,0 +1,25 @@
+parameters:
+# Tady můžete přidat parametry, které chcete sdílet v aplikaci.
+# Například: 'database_url': 'mysql://root:password@127.0.0.1:3306/your_db'
+
+services:
+    _defaults:
+        autowire: true      # Automaticky injektuje závislosti
+        autoconfigure: true # Automaticky registruje služby jako příkazy, event subscribers, atd.
+
+    # Definice připojení k databázi
+    Doctrine\DBAL\Connection:
+        factory: ['Doctrine\DBAL\DriverManager', 'getConnection']
+        arguments:
+            -
+                driver: 'pdo_mysql'
+                user: '%env(DATABASE_USER)%'
+                password: '%env(DATABASE_PASSWORD)%'
+                host: '%env(DATABASE_HOST)%'
+                port: '%env(DATABASE_PORT)%'
+                dbname: '%env(DATABASE_NAME)%'
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Kernel.php'

@@ -1,0 +1,50 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Yetinder Top 10 Yeti
+{% endblock title %}
+
+{% block body %}
+    <div class="container my-5 try-it">
+        <h2 class="mb-4 w-75 m-auto">Best of Yeti</h2>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle w-75 m-auto">
+                <thead class="table-dark w-100">
+                <tr>
+                    <th>#</th>
+                    <th>Profil</th>
+                    <th>Jméno</th>
+                    <th>Výška</th>
+                    <th>Váha</th>
+                    <th>Bydliště</th>
+                    <th>Hodnocení</th>
+                </tr>
+                </thead>
+                <tbody id="yeti-table-body">
+                {% for yeti in topYeti %}
+                    <tr
+                            {% if loop.index == 1 %}
+                                class="table-warning"
+                            {% elseif loop.index == 2 %}
+                                class="table-secondary"
+                            {% elseif loop.index == 3 %}
+                                class="table-info"
+                            {% endif %}
+                    >
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <img src="{{ asset(yeti.img) }}" width="50" alt="" onerror="this.onerror=null;this.src='{{ asset('/build/images/yeti.f7cdbb89.jpg') }}';"/>
+                        </td>
+                        <td>{{ yeti.username }}</td>
+                        <td>{{ yeti.vyska }}</td>
+                        <td>{{ yeti.vaha }}</td>
+                        <td>{{ yeti.mesto }}, {{ yeti.ulice }}</td>
+                        <td>{{ yeti.prumerne_hodnoceni }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock body %}

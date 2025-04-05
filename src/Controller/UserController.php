@@ -1,0 +1,109 @@
+<?php
+namespace App\Controller;
+
+use App\Repository\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
+class UserController extends AbstractController
+{
+
+    #[Route('/register', name: 'register')]
+    public function register(): Response
+    {
+        return $this->render('register.html.twig');
+    }
+
+    #[Route('/registerSubmit', name: 'registerSubmit', methods: ['POST'])]
+    public function registerSubmit(Request $request, UserRepository $userRepository): Response
+    {
+
+
+        if ($request->isMethod('POST')) {
+            $errors = [];
+
+            $email = $request->request->get('email');
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Invalid email';
+            }
+
+            $password = $request->request->get('password');
+            $confirmPassword = $request->request->get('confirm_password');
+            if ($password !== $confirmPassword) {
+                $errors[] = 'Passwords do not match';
+            }
+
+            if (strlen($password) < 6) {
+                $errors[] = 'Password must be at least 6 characters long';
+            }
+
+            if (!preg_match('/[a-z]/', $password)) {
+                $errors[] = 'Password must contain at least one lowercase letter';
+            }
+
+            if (!preg_match('/[A-Z]/', $password)) {
+                $errors[] = 'Password must contain at least one uppercase letter';
+            }
+
+            if (!preg_match('/\d/', $password)) {
+                $errors[] = 'Password must contain at least one digit';
+            }
+
+            if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+                $errors[] = 'Password must contain at least one special character';
+            }
+
+            if (count($errors) > 0) {
+                $this->addFlash('errors', $errors);
+                return $this->redirectToRoute('register');
+            }
+
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+            $userRepository->createUser($email, $hashedPassword);
+        }
+        return $this->redirectToRoute('login');
+    }
+
+    #[Route('/login', name: 'login')]
+    public function login(): Response
+    {
+        return $this->render('login.html.twig');
+    }
+
+
+    #[Route('/loginSubmit', name: 'loginSubmit', methods: ['POST'])]
+    public function loginSubmit(Request $request, UserRepository $userRepository, SessionInterface $session): Response
+    {
+        $errors = [];
+        $email = $request->request->get('email');
+        $password = $request->request->get('password');
+
+        $user = $userRepository->findByEmail($email);
+
+        if ($user == null){
+            $errors[] = 'Email not found';
+        }else{
+            if (!password_verify($password, $user['password'])) {
+                $errors[] = 'Wrong password';
+            }
+        }
+
+        if (count($errors) > 0) {
+            $this->addFlash('errors', $errors);
+            return $this->redirectToRoute('login');
+        }
+
+        $session->set('user_id', $user['id']);
+        return $this->redirectToRoute('top-yeti');
+    }
+
+    #[Route('/logout', name: 'logout')]
+    public function logout(SessionInterface $session): Response
+    {
+        $session->clear();
+        return $this->redirectToRoute('login');
+    }
+}

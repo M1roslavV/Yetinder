@@ -1,0 +1,36 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Yetinder Welcome!
+{% endblock title %}
+
+{% block body %}
+    <div class="container my-5">
+        {% if yeti %}
+            <h2 class="mb-4 text-center">Meet Your Yeti!</h2>
+            <div class="text-center">
+                <img src="{{ asset(yeti.img) }}" width="150" alt="" onerror="this.onerror=null;this.src='{{ asset('/build/images/yeti.f7cdbb89.jpg') }}';"/>
+                <h3>{{ yeti.username }}</h3>
+                <p><strong>Výška:</strong> {{ yeti.vyska }} cm</p>
+                <p><strong>Váha:</strong> {{ yeti.vaha }} kg</p>
+                <p><strong>Město:</strong> {{ address.mesto }}</p>
+                <p><strong>Ulice:</strong> {{ address.ulice }}</p>
+                <p><strong>Speciální schopnost:</strong> {{ yeti.specialni_schopnost }}</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <h4>Hodnocení Yetiho:</h4>
+                <form method="post" action="{{ path('match-yeti-process', { 'id': yeti.id }) }}">
+                    <div class="form-group">
+                        <label for="rating">Hodnocení (1-10):</label>
+                        <input type="number" id="score" name="score" min="1" max="10" class="form-control w-25 m-auto" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Odeslat Hodnocení</button>
+                </form>
+            </div>
+
+        {% else %}
+            <p>Momentálně nemáme žádného Yetiho pro zobrazení.</p>
+        {% endif %}
+    </div>
+{% endblock body %}

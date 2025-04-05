@@ -1,0 +1,19 @@
+body {
+    background-color: #9ec7de;
+}
+
+.try-it {
+    opacity: 0;
+    animation: fadeIn 5s forwards; /* animace s názvem fadeIn trvá 5 sekund */
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0; /* Na začátku bude opacity 0 */
+    }
+    100% {
+        opacity: 1; /* Na konci animace opacity 1 */
+    }
+}
+
+

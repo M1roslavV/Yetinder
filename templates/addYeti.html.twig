@@ -1,0 +1,70 @@
+{% extends "base.html.twig" %}
+{% block title %}
+    Yetinder add yeti
+{% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <main>
+            <div class="py-2 pt-5 text-center">
+                <h1 class="h2">Formulář pro přidání nového Yetiho</h1>
+                <p class="lead">Přidej svého Yetiho z hor</p>
+            </div>
+
+            <div class="col-md-7 col-lg-8 m-auto">
+                <form class="needs-validation" novalidate="" action="{{ path('add-yeti-submit') }}" enctype="multipart/form-data" method="post">
+                    <div class="row g-3">
+                        <!-- Username -->
+                        <div class="col-sm-4">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="" value="" required="">
+                        </div>
+
+                        <!-- Weight -->
+                        <div class="col-sm-4">
+                            <label for="weight" class="form-label">Weight</label>
+                            <input type="text" class="form-control" id="weight" name="weight" placeholder="" value="" required="">
+                        </div>
+
+                        <!-- Height -->
+                        <div class="col-sm-4">
+                            <label for="height" class="form-label">Height</label>
+                            <input type="text" class="form-control" id="height" name="height" placeholder="" value="" required="">
+                        </div>
+
+                        <!-- Town -->
+                        <div class="col-sm-6">
+                            <label for="town" class="form-label">Town</label>
+                            <input type="text" class="form-control" id="town" name="town" placeholder="" value="" required="">
+                        </div>
+
+                        <!-- Street -->
+                        <div class="col-sm-6">
+                            <label for="street" class="form-label">Street</label>
+                            <input type="text" class="form-control" id="street" name="street" placeholder="" value="" required="">
+                        </div>
+
+                        <!-- Special Ability -->
+                        <div class="col-sm-12">
+                            <label for="specialAbility" class="form-label">Special Ability</label>
+                            <input type="text" class="form-control" id="specialAbility" name="specialAbility" placeholder="" value="" required="">
+                        </div>
+
+                        <!-- Profile Image -->
+                        <div class="col-sm-12">
+                            <label for="profileImage" class="form-label">Choose profile image</label>
+                            <input type="file" class="form-control" id="profileImage" name="profileImage" required="">
+                        </div>
+                    </div>
+
+                    {% for message in app.flashes('errors') %}
+                        <p class="alert alert-danger">{{ message }}</p>
+                    {% endfor %}
+                    <hr class="my-4">
+
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">Add new Yeti</button>
+                </form>
+            </div>
+        </main>
+    </div>
+{% endblock body %}

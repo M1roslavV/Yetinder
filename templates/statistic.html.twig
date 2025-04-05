@@ -1,0 +1,151 @@
+{% extends "base.html.twig" %}
+
+{% block title %}
+    Yetinder Statistics
+{% endblock title %}
+
+{% block body %}
+    <style>
+        .chart-container {
+            position: relative;
+            height: 600px;
+            width: 100%;
+        }
+    </style>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-pills" id="statTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="day-tab" data-bs-toggle="pill" href="#day" role="tab" aria-controls="day" aria-selected="true">Dny</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="month-tab" data-bs-toggle="pill" href="#month" role="tab" aria-controls="month" aria-selected="false">Měsíce</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="year-tab" data-bs-toggle="pill" href="#year" role="tab" aria-controls="year" aria-selected="false">Roky</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tab-content" id="statTabsContent">
+            <!-- Dny -->
+            <div class="tab-pane fade show active" id="day" role="tabpanel" aria-labelledby="day-tab">
+                <div class="card stat-card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Průměrné hodnocení Yetiho za posledních 31 dní</h5>
+                        <p id="average-day" class="card-text">
+                            Průměrné hodnocení: {% if dayData is not empty %}{{ avgDay }}{% else %}Není dostupné{% endif %}
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="day-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Měsíce -->
+            <div class="tab-pane fade" id="month" role="tabpanel" aria-labelledby="month-tab">
+                <div class="card stat-card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Průměrné hodnocení Yetiho za posledních 12 měsíců</h5>
+                        <p id="average-month" class="card-text">
+                            Průměrné hodnocení: {% if monthData is not empty %}{{ avgMonth }}{% else %}Není dostupné{% endif %}
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="month-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roky -->
+            <div class="tab-pane fade" id="year" role="tabpanel" aria-labelledby="year-tab">
+                <div class="card stat-card mt-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Průměrné hodnocení Yetiho za posledních 12 roků</h5>
+                        <p id="average-year" class="card-text">
+                            Průměrné hodnocení: {% if yearData is not empty %}{{ avgYear }}{% else %}Není dostupné{% endif %}
+                        </p>
+                        <div class="chart-container">
+                            <canvas id="year-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const dayLabels = {{ dayLabels|json_encode|raw }};
+            const dayData = {{ dayRatings|json_encode|raw }}.map(value => value ?? 0);
+
+            const monthLabels = {{ monthLabels|json_encode|raw }};
+            const monthData = {{ monthRatings|json_encode|raw }}.map(value => value ?? 0);
+
+            const yearLabels = {{ yearLabels|json_encode|raw }};
+            const yearData = {{ yearRatings|json_encode|raw }}.map(value => value ?? 0);
+
+            function drawChart(elementId, labels, data) {
+                const ctx = document.getElementById(elementId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Průměrné hodnocení',
+                            data: data,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 0.1
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Hodnocení: ${context.parsed.y.toFixed(2)}`;
+                                    }
+                                }
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        }
+                    }
+                });
+            }
+
+            drawChart('day-chart', dayLabels, dayData);
+            drawChart('month-chart', monthLabels, monthData);
+            drawChart('year-chart', yearLabels, yearData);
+        });
+    </script>
+{% endblock body %}
