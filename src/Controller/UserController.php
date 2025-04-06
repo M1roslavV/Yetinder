@@ -20,7 +20,7 @@ class UserController extends AbstractController
     #[Route('/registerSubmit', name: 'registerSubmit', methods: ['POST'])]
     public function registerSubmit(Request $request, UserRepository $userRepository): Response
     {
-
+        $passwordValid = [];
 
         if ($request->isMethod('POST')) {
             $errors = [];
@@ -37,27 +37,38 @@ class UserController extends AbstractController
             }
 
             if (strlen($password) < 6) {
-                $errors[] = 'Password must be at least 6 characters long';
+                $passwordValid[] = "6 characters";
             }
 
             if (!preg_match('/[a-z]/', $password)) {
-                $errors[] = 'Password must contain at least one lowercase letter';
+                $passwordValid[] = "one lowercase letter";
             }
 
             if (!preg_match('/[A-Z]/', $password)) {
-                $errors[] = 'Password must contain at least one uppercase letter';
+                $passwordValid[] = "one uppercase letter";
             }
 
             if (!preg_match('/\d/', $password)) {
-                $errors[] = 'Password must contain at least one digit';
+                $passwordValid[] = "one digit";
             }
 
             if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
-                $errors[] = 'Password must contain at least one special character';
+                $passwordValid[] = "one special character";
+            }
+
+            if(count($passwordValid) > 0){
+
+                $passwordValidString = "Password must at least " . implode(", ", $passwordValid);
+                $errors[] = $passwordValidString;
             }
 
             if (count($errors) > 0) {
-                $this->addFlash('errors', $errors);
+                $string = "";
+                foreach ($errors as $error) {
+                    $string .= $error . "\n";
+                }
+
+                $this->addFlash('errors', $string);
                 return $this->redirectToRoute('register');
             }
 
@@ -79,20 +90,30 @@ class UserController extends AbstractController
     {
         $errors = [];
         $email = $request->request->get('email');
-        $password = $request->request->get('password');
-
-        $user = $userRepository->findByEmail($email);
-
-        if ($user == null){
-            $errors[] = 'Email not found';
+        $user = null;
+        if($email == ""){
+            $errors[] = 'Email is required';
         }else{
-            if (!password_verify($password, $user['password'])) {
-                $errors[] = 'Wrong password';
+            $password = $request->request->get('password');
+
+            $user = $userRepository->findByEmail($email);
+
+            if ($user === null){
+                $errors[] = 'Email not found';
+            }else{
+                if (!password_verify($password, $user['password'])) {
+                    $errors[] = 'Wrong password';
+                }
             }
         }
 
         if (count($errors) > 0) {
-            $this->addFlash('errors', $errors);
+            $string = "";
+            foreach ($errors as $error) {
+                $string .= $error . "\n";
+            }
+
+            $this->addFlash('errors', $string);
             return $this->redirectToRoute('login');
         }
 
