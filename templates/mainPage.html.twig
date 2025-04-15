@@ -9,7 +9,7 @@
         {% if yeti %}
             <h2 class="mb-4 text-center">Meet Your Yeti!</h2>
             <div class="text-center">
-                <img src="{{ asset(yeti.img) }}" width="150" alt="" onerror="this.onerror=null;this.src='{{ asset('/build/images/yeti.f7cdbb89.jpg') }}';"/>
+                <img src="{{ asset(yeti.img ?? '/build/images/yeti.f7cdbb89.jpg')}}" width="150" alt="" onerror="this.onerror=null;this.src='{{ asset('/build/images/yeti.f7cdbb89.jpg') }}';"/>
                 <h3>{{ yeti.username }}</h3>
                 <p><strong>Výška:</strong> {{ yeti.vyska }} cm</p>
                 <p><strong>Váha:</strong> {{ yeti.vaha }} kg</p>

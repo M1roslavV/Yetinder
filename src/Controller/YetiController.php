@@ -69,13 +69,14 @@ final class YetiController extends AbstractController
         }
 
         $yeti = $yetiRepository->findByUsername($username);
-        if (!empty($yeti)) {
+        if (empty($yeti)) {
             $yeti = [];
             $yeti['username'] = "";
             $yeti['id'] = "";
         }
 
-        if($username === $yeti['username']) {
+
+        if($request->request->get($username) === $yeti['username']) {
             $errors[] = "The yeti with this username already exists.";
         }
 
@@ -102,9 +103,10 @@ final class YetiController extends AbstractController
                      error_log("Chyba při nahrávání souboru: " . $e->getMessage());
                 }
             }
-            $yetiRepository->createYeti($username, $weight, $height, $specialAbility, '/uploads/' . $newFileName);
+            $yetiRepository->createYeti($username, $weight, $height, $specialAbility, '/uploads/' . $newFileName, $userId);
+            $yeti = $yetiRepository->findByUsername($username);
             if ($yeti['id'] !==""){
-                $addressRepository->createAddress($town,$street, $yeti['id']);
+                $addressRepository->createAddress($town, $street, $yeti['id']);
             }
         }
 

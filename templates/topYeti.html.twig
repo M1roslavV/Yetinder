@@ -33,7 +33,7 @@
                     >
                         <td>{{ loop.index }}</td>
                         <td>
-                            <img src="{{ asset(yeti.img) }}" width="50" alt="" onerror="this.onerror=null;this.src='{{ asset('/build/images/yeti.f7cdbb89.jpg') }}';"/>
+                            <img src="{{ asset(yeti.img ?? '/build/images/yeti.f7cdbb89.jpg') }}" width="50" alt="" onerror="this.onerror=null;this.src='{{ asset('/build/images/yeti.f7cdbb89.jpg') }}';"/>
                         </td>
                         <td>{{ yeti.username }}</td>
                         <td>{{ yeti.vyska }}</td>

@@ -13,7 +13,7 @@ class YetiRepository
     {
         $this->db = $db;
     }
-    public function createYeti(string $username, int $weight, int $height, string $specialAbility, string $img): void
+    public function createYeti(string $username, int $weight, int $height, string $specialAbility, string $img, int $user_id): void
     {
         try {
             $this->db->insert('yeti', [
@@ -21,7 +21,8 @@ class YetiRepository
                 'vaha' => $weight,
                 'username' => $username,
                 'specialni_schopnost' => $specialAbility,
-                'img' => $img
+                'img' => $img,
+                'user_id' => $user_id
 
             ]);
         } catch (Exception $e) {
